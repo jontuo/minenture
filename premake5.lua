@@ -1,0 +1,91 @@
+
+workspace("minenture")
+    configurations({"debug", "release"})
+    toolset("clang")
+
+    project("glad")
+        kind("StaticLib")
+        language("C")
+        files("lib/glad/src/*.c")
+        includedirs("lib/glad/inc/glad")
+        filter("configurations:debug")
+            warnings("High")
+        filter("configurations:release")
+            optimize("Speed")
+
+    project("glpp")
+        kind("StaticLib")
+        language("C++")
+        files("lib/glpp/src/*.cpp")
+        includedirs({"lib/glpp/inc/glpp", "lib/glad/inc"})
+        filter("configurations:debug")
+            warnings("High")
+        filter("configurations:release")
+            optimize("Speed")
+
+    project("chipmunk")
+        kind("StaticLib")
+        language("C")
+        cdialect("gnu99") -- GNU99 dialect (-std=gnu99).
+        files({"lib/Chipmunk2D/src/*.c", "lib/Chipmunk2D/src/*.h"})
+        includedirs("lib/Chipmunk2D/include")
+        filter("configurations:debug")
+            optimize("Off") -- Disable optimization (-O0).
+            --symbols("On") -- Debug symbols (-g).
+            warnings("High") -- Most warnings (-Wall).
+            --debugger("GDB")
+        filter("configurations:release")
+            optimize("Speed") -- Speed optimization (-O3).
+            floatingpoint("Fast") -- Fast floating point calculations (-ffast-math).
+            symbols("Off") -- No debug symbols.
+            warnings("Off") -- No warnings (-w).
+            defines("NDEBUG")
+
+--    project("chipmunkpp")
+--        kind("StaticLib")
+--        language("C++")
+--        files("lib/chipmunkpp/src/*.cpp")
+--        includedirs({"lib/chipmunkpp/inc", "lib/Chipmunk2D/include"})
+--        filter("configurations:debug")
+--            warnings("High")
+--        filter("configurations:release")
+--            optimize("Speed")
+
+--    project("box2d")
+--        kind("StaticLib")
+--        language("C++")
+--        cppdialect("C++11")
+--        files("lib/Box2D/Box2D/**")
+--        includedirs("lib/Box2D")
+--        filter("configurations:debug")
+--            defines("DEBUG")
+--            warnings("Extra")
+--        filter("configurations:release")
+--            defines("NDEBUG")
+--            optimize("Speed")
+
+    project("imgui")
+        kind("StaticLib")
+        language("C++")
+        files({"lib/imgui/imgui.cpp", "lib/imgui/imgui_demo.cpp", "lib/imgui/imgui_draw.cpp"})
+        includedirs("lib/imgui")
+        filter("configurations:debug")
+            warnings("High")
+        filter("configurations:release")
+            optimize("Speed")
+
+    project("minenture")
+        kind("WindowedApp")
+        language("C++")
+        cppdialect("C++1z")
+        files("src/*.cpp")
+        removefiles({"src/gamee.cpp", "src/worldd.cpp"})
+        includedirs({"inc", "lib/glad/inc", "lib/glpp/inc", "lib/Chipmunk2D/include", "lib/entt/src", "lib/SFML/include", "lib/stb", "lib/imgui"})
+        libdirs("lib/SFML/lib")
+        links({"dl", "chipmunk", "sfml-window-s", "sfml-system-s", "X11", "Xrandr", "GL", "pthread", "udev", "glpp", "glad", "imgui"})
+        filter("configurations:debug")
+            warnings("High")
+            debugger("GDB")
+            symbols("On") -- Debug symbols (-g).
+        filter("configurations:release")
+            optimize("Speed")
